@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import logoImg from '../assets/logo.jpg'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, ShoppingBag, User, Menu, X, Heart } from 'lucide-react'
@@ -45,15 +46,15 @@ const Header = () => {
             {/* Logo */}
             <Link 
               to="/" 
-              className="flex-shrink-0 group flex items-center"
+              className="flex items-center flex-shrink-0 group"
               aria-label="ZOLANI Home"
             >
               {/* image logo imported from assets */}
-              <img src={require('../logo.jpg')} alt="ZOLANI logo" className="h-10 md:h-12 object-contain" />
+              <img src={logoImg} alt="ZOLANI logo" className="object-contain h-10 md:h-12" />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-8">
+            <div className="items-center hidden space-x-8 lg:flex">
               {navigationItems.map((item) => (
                 <Link
                   key={item.name}
@@ -81,7 +82,7 @@ const Header = () => {
               {/* Search */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300"
+                className="p-2 transition-colors duration-300 text-luxury-charcoal hover:text-luxury-gold"
                 aria-label="Search"
               >
                 <Search size={20} />
@@ -89,29 +90,29 @@ const Header = () => {
 
               {/* Wishlist */}
               <button
-                className="hidden sm:block p-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300 relative"
+                className="relative hidden p-2 transition-colors duration-300 sm:block text-luxury-charcoal hover:text-luxury-gold"
                 aria-label="Wishlist"
               >
                 <Heart size={20} />
-                <span className="absolute -top-1 -right-1 bg-luxury-gold text-luxury-charcoal text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full -top-1 -right-1 bg-luxury-gold text-luxury-charcoal">
                   2
                 </span>
               </button>
 
               {/* Shopping Bag */}
               <button
-                className="p-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300 relative"
+                className="relative p-2 transition-colors duration-300 text-luxury-charcoal hover:text-luxury-gold"
                 aria-label="Shopping bag"
               >
                 <ShoppingBag size={20} />
-                <span className="absolute -top-1 -right-1 bg-luxury-gold text-luxury-charcoal text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                <span className="absolute flex items-center justify-center w-5 h-5 text-xs font-medium rounded-full -top-1 -right-1 bg-luxury-gold text-luxury-charcoal">
                   3
                 </span>
               </button>
 
               {/* User Account */}
               <button
-                className="hidden sm:block p-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300"
+                className="hidden p-2 transition-colors duration-300 sm:block text-luxury-charcoal hover:text-luxury-gold"
                 aria-label="Account"
               >
                 <User size={20} />
@@ -120,7 +121,7 @@ const Header = () => {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300"
+                className="p-2 transition-colors duration-300 lg:hidden text-luxury-charcoal hover:text-luxury-gold"
                 aria-label="Menu"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -138,9 +139,9 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed top-20 left-0 right-0 z-40 lg:hidden bg-white/98 backdrop-blur-md border-b border-luxury-beige shadow-lg"
+            className="fixed left-0 right-0 z-40 border-b shadow-lg top-20 lg:hidden bg-white/98 backdrop-blur-md border-luxury-beige"
           >
-            <div className="container-luxury py-6">
+            <div className="py-6 container-luxury">
               <nav className="flex flex-col space-y-4">
                 {navigationItems.map((item) => (
                   <Link
@@ -157,12 +158,12 @@ const Header = () => {
                 ))}
                 
                 {/* Mobile User Actions */}
-                <div className="pt-4 border-t border-luxury-beige/30 flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300">
+                <div className="flex items-center pt-4 space-x-4 border-t border-luxury-beige/30">
+                  <button className="flex items-center space-x-2 transition-colors duration-300 text-luxury-charcoal hover:text-luxury-gold">
                     <User size={18} />
                     <span>Account</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-luxury-charcoal hover:text-luxury-gold transition-colors duration-300">
+                  <button className="flex items-center space-x-2 transition-colors duration-300 text-luxury-charcoal hover:text-luxury-gold">
                     <Heart size={18} />
                     <span>Wishlist</span>
                   </button>
@@ -183,20 +184,20 @@ const Header = () => {
             className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
             onClick={() => setIsSearchOpen(false)}
           >
-            <div className="container-luxury pt-32">
+            <div className="pt-32 container-luxury">
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-xl p-8 max-w-2xl mx-auto shadow-2xl"
+                className="max-w-2xl p-8 mx-auto bg-white shadow-2xl rounded-xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-luxury-warm" size={20} />
+                  <Search className="absolute transform -translate-y-1/2 left-4 top-1/2 text-luxury-warm" size={20} />
                   <input
                     type="text"
                     placeholder="Search for products, collections..."
-                    className="w-full pl-12 pr-4 py-4 text-lg bg-luxury-beige/30 rounded-lg border border-luxury-beige focus:border-luxury-gold focus:outline-none transition-colors duration-300"
+                    className="w-full py-4 pl-12 pr-4 text-lg transition-colors duration-300 border rounded-lg bg-luxury-beige/30 border-luxury-beige focus:border-luxury-gold focus:outline-none"
                     autoFocus
                   />
                 </div>

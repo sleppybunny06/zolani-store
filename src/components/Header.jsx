@@ -45,16 +45,11 @@ const Header = () => {
             {/* Logo */}
             <Link 
               to="/" 
-              className="flex-shrink-0 group"
+              className="flex-shrink-0 group flex items-center"
               aria-label="ZOLANI Home"
             >
-              <motion.div 
-                className="text-2xl md:text-3xl font-display font-bold text-luxury-charcoal group-hover:text-luxury-gold transition-colors duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                ZOLANI
-              </motion.div>
+              {/* image logo imported from assets */}
+              <img src={require('../logo.jpg')} alt="ZOLANI logo" className="h-10 md:h-12 object-contain" />
             </Link>
 
             {/* Desktop Navigation */}

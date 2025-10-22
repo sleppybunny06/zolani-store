@@ -1,0 +1,110 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  * {
+    @apply border-luxury-beige/30;
+  }
+  
+  body {
+    @apply bg-luxury-ivory text-luxury-charcoal font-body;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-luxury-beige;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-luxury-gold rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-luxury-warm;
+  }
+  
+  /* Selection color */
+  ::selection {
+    @apply bg-luxury-blush text-luxury-charcoal;
+  }
+  
+  /* Focus styles */
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-2 outline-offset-2 outline-luxury-gold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-warm transition-all duration-300 px-8 py-3 font-medium tracking-wide;
+  }
+  
+  .btn-secondary {
+    @apply border border-luxury-charcoal text-luxury-charcoal hover:bg-luxury-charcoal hover:text-luxury-ivory transition-all duration-300 px-8 py-3 font-medium tracking-wide;
+  }
+  
+  .btn-gold {
+    @apply bg-luxury-gold text-luxury-charcoal hover:bg-luxury-warm hover:text-luxury-ivory transition-all duration-300 px-8 py-3 font-medium tracking-wide;
+  }
+  
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12;
+  }
+  
+  .container-luxury {
+    @apply max-w-7xl mx-auto section-padding;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-luxury-gold to-luxury-warm bg-clip-text text-transparent;
+  }
+  
+  .card-luxury {
+    @apply bg-white/80 backdrop-blur-sm border border-luxury-beige/50 rounded-lg shadow-lg shadow-luxury-beige/20 transition-all duration-300 hover:shadow-xl hover:shadow-luxury-beige/30;
+  }
+  
+  .input-luxury {
+    @apply w-full px-4 py-3 border border-luxury-beige bg-luxury-cream/50 rounded-lg focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    /* Use max-width and word-break for better cross-browser compatibility */
+    max-width: 65ch;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+  
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animate-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animate-delay-600 {
+    animation-delay: 600ms;
+  }
+}

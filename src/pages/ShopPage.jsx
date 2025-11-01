@@ -226,7 +226,7 @@ const ShopPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <ProductGrid limit={20} />
+              <ProductGrid limit={20} filters={filters} sortBy={sortBy} />
             </motion.div>
 
             {/* Load More Button */}

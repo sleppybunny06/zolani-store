@@ -16,6 +16,10 @@ import CollectionsPage from './pages/CollectionsPage'
 import AboutPage from './pages/AboutPage'
 import JournalPage from './pages/JournalPage'
 import ContactPage from './pages/ContactPage'
+import LoginPage from './pages/LoginPage'
+import AccountPage from './pages/AccountPage'
+import CartPage from './pages/CartPage'
+import OrderHistoryPage from './pages/OrderHistoryPage'
 
 function App() {
   const location = useLocation()
@@ -47,6 +51,10 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/journal" element={<JournalPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/account" element={<AccountPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/orders" element={<OrderHistoryPage />} />
             </Routes>
           </motion.div>
         </AnimatePresence>

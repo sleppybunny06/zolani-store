@@ -1,13 +1,21 @@
 import React from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Loader } from 'lucide-react'
 import ProductGrid from '../components/ProductGrid'
+import { useShopifyCollections, useCollectionByHandle } from '../hooks/useShopifyCollections'
 
 const CollectionsPage = () => {
   const { slug } = useParams()
+  
+  // Fetch specific collection if slug exists
+  const { collection: specificCollection, loading: specificLoading, error: specificError } = useCollectionByHandle(slug, 50)
+  
+  // Fetch all collections
+  const { collections: shopifyCollections, loading: allLoading, error: allError } = useShopifyCollections(50)
 
-  const collections = [
+  // Fallback collections data if API fails
+  const defaultCollections = [
     {
       id: 1,
       title: "The Festive Bloom",
@@ -37,6 +45,19 @@ const CollectionsPage = () => {
     }
   ]
 
+  // Transform Shopify collections to match expected format, or use defaults
+  const collections = shopifyCollections && shopifyCollections.length > 0 
+    ? shopifyCollections.map(col => ({
+        id: col.id,
+        title: col.title,
+        slug: col.handle,
+        subtitle: col.title,
+        description: col.description || "Curated collection of premium handcrafted pieces.",
+        image: col.image?.url || defaultCollections[0].image,
+        products: col.products?.edges?.length || 0
+      }))
+    : defaultCollections
+
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
@@ -44,16 +65,29 @@ const CollectionsPage = () => {
   }
 
   // If we have a specific collection slug, show that collection
-  const specificCollection = collections.find(c => c.slug === slug)
+  const foundCollection = collections.find(c => c.slug === slug)
 
-  if (specificCollection) {
+  if (specificLoading) {
+    return (
+      <div className="min-h-screen bg-luxury-ivory flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        >
+          <Loader className="w-12 h-12 text-luxury-gold" />
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (foundCollection) {
     return (
       <div className="min-h-screen bg-luxury-ivory">
         {/* Collection Hero */}
         <section className="relative h-screen min-h-[600px] overflow-hidden">
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${specificCollection.image})` }}
+            style={{ backgroundImage: `url(${foundCollection.image})` }}
           />
           <div className="absolute inset-0 bg-black/40" />
           
@@ -66,19 +100,19 @@ const CollectionsPage = () => {
                 className="max-w-4xl mx-auto"
               >
                 <p className="text-luxury-gold font-medium tracking-widest uppercase mb-4 text-sm md:text-base">
-                  {specificCollection.subtitle}
+                  {foundCollection.subtitle}
                 </p>
                 
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight">
-                  {specificCollection.title}
+                  {foundCollection.title}
                 </h1>
                 
                 <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed text-white/90">
-                  {specificCollection.description}
+                  {foundCollection.description}
                 </p>
                 
                 <div className="flex items-center justify-center gap-4 text-white/80">
-                  <span>{specificCollection.products} pieces</span>
+                  <span>{foundCollection.products} pieces</span>
                   <span>•</span>
                   <span>Handcrafted in India</span>
                 </div>
@@ -96,7 +130,7 @@ const CollectionsPage = () => {
               viewport={{ once: true }}
               variants={fadeInUp}
             >
-              <ProductGrid limit={specificCollection.products} />
+              <ProductGrid limit={Math.max(foundCollection.products, 20)} />
             </motion.div>
           </div>
         </section>

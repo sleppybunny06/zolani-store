@@ -1,15 +1,196 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Heart, ShoppingBag, Eye } from 'lucide-react'
-import { products } from '../data/products'
+import { Heart, ShoppingBag, Eye, Loader } from 'lucide-react'
+import { useShopifyProducts } from '../hooks/useShopifyProducts'
 import { useTheme } from '../contexts/ThemeContext'
+import { useCart } from '../contexts/CartContext'
 
-const ProductGrid = ({ limit = 8 }) => {
+const ProductGrid = ({ 
+  limit = 8,
+  filters = {},
+  sortBy = 'newest'
+}) => {
   const [wishlist, setWishlist] = useState(new Set())
+  const [addedToCart, setAddedToCart] = useState(new Set())
   const { isDarkMode } = useTheme()
+  const { addToCart } = useCart()
+  const { products, loading, error } = useShopifyProducts(limit * 2) // Fetch extra to account for filtering
 
-  const displayProducts = products.slice(0, limit)
+  // Fallback products with diverse prices and categories
+  const fallbackProducts = [
+    {
+      id: '1',
+      name: 'Ivory Bloom Kurta Set',
+      price: 3490,
+      originalPrice: 4200,
+      image: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1631084655463-e671365ec05f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Kurta Sets',
+      rating: 4.8,
+      isNew: true,
+      isBestseller: false,
+      vendor: 'Premium Collection',
+      tags: ['kurta', 'festival']
+    },
+    {
+      id: '2',
+      name: 'Royal Banarasi Saree',
+      price: 8990,
+      originalPrice: 10500,
+      image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Sarees',
+      rating: 4.9,
+      isNew: false,
+      isBestseller: true,
+      vendor: 'Luxury',
+      tags: ['saree', 'wedding']
+    },
+    {
+      id: '3',
+      name: 'Emerald Evening Anarkali',
+      price: 5490,
+      originalPrice: null,
+      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Anarkalis',
+      rating: 4.7,
+      isNew: true,
+      isBestseller: false,
+      vendor: 'Contemporary',
+      tags: ['anarkali', 'party']
+    },
+    {
+      id: '4',
+      name: 'Festive Lehenga Choli',
+      price: 6990,
+      originalPrice: 8200,
+      image: 'https://images.unsplash.com/photo-1631084655463-e671365ec05f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Lehengas',
+      rating: 4.6,
+      isNew: false,
+      isBestseller: false,
+      vendor: 'Festive',
+      tags: ['lehenga', 'festival']
+    },
+    {
+      id: '5',
+      name: 'Navy Block Print Kurta',
+      price: 2990,
+      originalPrice: null,
+      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Kurtas',
+      rating: 4.5,
+      isNew: false,
+      isBestseller: true,
+      vendor: 'Casual',
+      tags: ['kurta', 'casual']
+    },
+    {
+      id: '6',
+      name: 'Silk Palazzo Set',
+      price: 4490,
+      originalPrice: 5200,
+      image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1631084655463-e671365ec05f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Palazzo Sets',
+      rating: 4.4,
+      isNew: false,
+      isBestseller: false,
+      vendor: 'Contemporary',
+      tags: ['palazzo', 'casual']
+    },
+    {
+      id: '7',
+      name: 'Rose Gold Dupatta',
+      price: 1990,
+      originalPrice: null,
+      image: 'https://images.unsplash.com/photo-1631084655463-e671365ec05f?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Dupattas',
+      rating: 4.5,
+      isNew: true,
+      isBestseller: false,
+      vendor: 'Accessories',
+      tags: ['dupatta', 'accessory']
+    },
+    {
+      id: '8',
+      name: 'Chanderi Saree',
+      price: 5990,
+      originalPrice: 7200,
+      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      hoverImage: 'https://images.unsplash.com/photo-1583391733956-6c78276477e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3',
+      category: 'Sarees',
+      rating: 4.8,
+      isNew: false,
+      isBestseller: true,
+      vendor: 'Luxury',
+      tags: ['saree', 'festival']
+    }
+  ]
+
+  // Transform Shopify data
+  const transformedProducts = useMemo(() => {
+    if (products && products.length > 0) {
+      return products.map(product => ({
+        id: product.id,
+        name: product.title,
+        price: product.priceRange?.minVariantPrice?.amount || 0,
+        originalPrice: null,
+        image: product.featuredImage?.url || '',
+        hoverImage: product.images?.edges?.[1]?.node?.url || '',
+        category: product.productType || 'Product',
+        rating: 4.5,
+        isNew: false,
+        isBestseller: false,
+        vendor: product.vendor || 'ZOLANI',
+        tags: product.tags || [],
+        handle: product.handle,
+      }))
+    }
+    return fallbackProducts
+  }, [products])
+
+  // Apply filters and sorting
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = [...transformedProducts]
+
+    // Apply filters
+    if (filters.category && filters.category.length > 0) {
+      result = result.filter(p => filters.category.includes(p.category))
+    }
+
+    if (filters.priceRange && filters.priceRange.length === 2) {
+      result = result.filter(p => 
+        p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
+      )
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'price-low':
+        result.sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        result.sort((a, b) => b.price - a.price)
+        break
+      case 'rating':
+        result.sort((a, b) => b.rating - a.rating)
+        break
+      case 'popular':
+        result.sort((a, b) => b.isBestseller - a.isBestseller)
+        break
+      case 'newest':
+      default:
+        result.sort((a, b) => b.isNew - a.isNew)
+    }
+
+    return result.slice(0, limit)
+  }, [transformedProducts, filters, sortBy, limit])
 
   const toggleWishlist = (productId) => {
     setWishlist(prev => {
@@ -21,6 +202,26 @@ const ProductGrid = ({ limit = 8 }) => {
       }
       return newWishlist
     })
+  }
+
+  const handleAddToCart = (product) => {
+    addToCart({
+      id: product.id,
+      title: product.name,
+      price: product.price,
+      image: product.image,
+      handle: product.handle,
+    }, 1)
+
+    // Show visual feedback
+    setAddedToCart(prev => new Set([...prev, product.id]))
+    setTimeout(() => {
+      setAddedToCart(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(product.id)
+        return newSet
+      })
+    }, 1500)
   }
 
   const formatPrice = (price) => {
@@ -53,6 +254,31 @@ const ProductGrid = ({ limit = 8 }) => {
     }
   }
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        >
+          <Loader className={`w-8 h-8 ${isDarkMode ? 'text-luxury-dark-gold' : 'text-luxury-gold'}`} />
+        </motion.div>
+      </div>
+    )
+  }
+
+  // Empty state
+  if (filteredAndSortedProducts.length === 0) {
+    return (
+      <div className={`text-center py-12 px-6 rounded-2xl ${isDarkMode ? 'bg-luxury-dark-surface border border-luxury-dark-border' : 'bg-luxury-beige/20 border border-luxury-beige'}`}>
+        <p className={`text-lg font-medium ${isDarkMode ? 'text-luxury-dark-text' : 'text-luxury-charcoal'}`}>
+          No products match your filters
+        </p>
+      </div>
+    )
+  }
+
   return (
     <motion.div 
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
@@ -61,7 +287,7 @@ const ProductGrid = ({ limit = 8 }) => {
       whileInView="visible"
       viewport={{ once: true }}
     >
-      {displayProducts.map((product) => (
+      {filteredAndSortedProducts.map((product) => (
         <motion.div
           key={product.id}
           variants={itemVariants}
@@ -155,13 +381,20 @@ const ProductGrid = ({ limit = 8 }) => {
 
             {/* Quick Add to Cart */}
             <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-              <button className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
-                isDarkMode
-                  ? 'bg-luxury-dark-gold text-luxury-dark-bg hover:bg-luxury-dark-accent hover:text-luxury-dark-text'
-                  : 'bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-gold hover:text-luxury-charcoal'
-              }`}>
+              <button 
+                onClick={() => handleAddToCart(product)}
+                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+                  addedToCart.has(product.id)
+                    ? isDarkMode
+                      ? 'bg-green-600 text-white'
+                      : 'bg-green-500 text-white'
+                    : isDarkMode
+                      ? 'bg-luxury-dark-gold text-luxury-dark-bg hover:bg-luxury-dark-accent hover:text-luxury-dark-text'
+                      : 'bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-gold hover:text-luxury-charcoal'
+                }`}
+              >
                 <ShoppingBag size={16} />
-                Add to Bag
+                {addedToCart.has(product.id) ? 'Added!' : 'Add to Bag'}
               </button>
             </div>
           </div>

@@ -238,7 +238,7 @@ const LoginPage = () => {
               isDarkMode ? 'text-luxury-dark-text-muted' : 'text-luxury-warm'
             }`}>
               Create an account{' '}
-              <Link to="#" className={`font-medium transition-colors ${
+              <Link to="/signup" className={`font-medium transition-colors ${
                 isDarkMode 
                   ? 'text-luxury-dark-gold hover:text-luxury-dark-text' 
                   : 'text-luxury-gold hover:text-luxury-charcoal'

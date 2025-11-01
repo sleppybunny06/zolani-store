@@ -17,6 +17,7 @@ import AboutPage from './pages/AboutPage'
 import JournalPage from './pages/JournalPage'
 import ContactPage from './pages/ContactPage'
 import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import AccountPage from './pages/AccountPage'
 import CartPage from './pages/CartPage'
 import OrderHistoryPage from './pages/OrderHistoryPage'
@@ -52,6 +53,7 @@ function App() {
               <Route path="/journal" element={<JournalPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
               <Route path="/account" element={<AccountPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/orders" element={<OrderHistoryPage />} />

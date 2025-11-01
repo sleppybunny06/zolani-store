@@ -48,6 +48,30 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  const signup = async (userData) => {
+    setIsLoading(true)
+    setError(null)
+    try {
+      const response = await createCustomer(userData)
+      
+      if (response.customerAccessToken) {
+        setAccessToken(response.customerAccessToken.accessToken)
+        setUser(response.customer)
+        localStorage.setItem('customerAccessToken', response.customerAccessToken.accessToken)
+        localStorage.setItem('customer', JSON.stringify(response.customer))
+        return { success: true }
+      } else if (response.errors) {
+        throw new Error(response.errors[0]?.message || 'Signup failed')
+      }
+    } catch (err) {
+      const message = err.message || 'Signup failed'
+      setError(message)
+      return { success: false, error: message }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const logout = () => {
     setUser(null)
     setAccessToken(null)
@@ -68,6 +92,7 @@ export const AuthProvider = ({ children }) => {
       isLoading,
       error,
       login,
+      signup,
       logout,
       updateUser,
       isLoggedIn: !!user && !!accessToken,
@@ -149,6 +174,89 @@ async function loginCustomer(email, password) {
     }
   } catch (error) {
     console.error('Login error:', error)
+    return {
+      customerAccessToken: null,
+      customer: null,
+      errors: [{ message: error.message }],
+    }
+  }
+}
+
+/**
+ * Create a new customer account
+ */
+async function createCustomer(userData) {
+  const domain = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN
+  const token = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN
+
+  const mutation = `
+    mutation createCustomer($input: CustomerCreateInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+          firstName
+          lastName
+          email
+          phone
+          defaultAddress {
+            id
+            address1
+            address2
+            city
+            province
+            country
+            zip
+          }
+        }
+        customerUserErrors {
+          message
+          field
+        }
+      }
+    }
+  `
+
+  const variables = {
+    input: {
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      password: userData.password,
+      acceptsMarketing: userData.acceptsMarketing || false,
+    },
+  }
+
+  try {
+    const res = await fetch(`https://${domain}/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': token,
+      },
+      body: JSON.stringify({ query: mutation, variables }),
+    })
+
+    const data = await res.json()
+
+    if (data.errors) {
+      throw new Error(data.errors[0]?.message || 'Signup failed')
+    }
+
+    const { customer, customerUserErrors } = data.data.customerCreate
+
+    if (customerUserErrors && customerUserErrors.length > 0) {
+      throw new Error(customerUserErrors[0].message)
+    }
+
+    if (!customer) {
+      throw new Error('Failed to create account')
+    }
+
+    // Now log them in automatically
+    const loginResponse = await loginCustomer(userData.email, userData.password)
+    return loginResponse
+  } catch (error) {
+    console.error('Signup error:', error)
     return {
       customerAccessToken: null,
       customer: null,

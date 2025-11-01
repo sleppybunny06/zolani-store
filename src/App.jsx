@@ -2,6 +2,7 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
+import { useTheme } from './contexts/ThemeContext'
 
 // Components
 import Header from './components/Header'
@@ -18,9 +19,14 @@ import ContactPage from './pages/ContactPage'
 
 function App() {
   const location = useLocation()
+  const { isDarkMode } = useTheme()
 
   return (
-    <div className="min-h-screen bg-luxury-ivory">
+    <div className={`min-h-screen transition-colors duration-300 ${
+      isDarkMode 
+        ? 'bg-luxury-dark-bg text-luxury-dark-text' 
+        : 'bg-luxury-ivory text-luxury-charcoal'
+    }`}>
       <Header />
       
       <main className="pt-20">

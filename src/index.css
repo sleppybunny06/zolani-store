@@ -8,8 +8,12 @@
   }
   
   body {
-    @apply bg-luxury-ivory text-luxury-charcoal font-body;
+    @apply bg-luxury-ivory text-luxury-charcoal font-body transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  .dark body {
+    @apply bg-luxury-dark-bg text-luxury-dark-text;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -30,17 +34,33 @@
     @apply bg-luxury-beige;
   }
   
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-luxury-dark-surface;
+  }
+  
   ::-webkit-scrollbar-thumb {
     @apply bg-luxury-gold rounded-full;
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    @apply bg-luxury-dark-gold rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-luxury-warm;
   }
   
+  .dark ::-webkit-scrollbar-thumb:hover {
+    @apply bg-luxury-dark-accent;
+  }
+  
   /* Selection color */
   ::selection {
     @apply bg-luxury-blush text-luxury-charcoal;
+  }
+  
+  .dark ::selection {
+    @apply bg-luxury-dark-accent text-luxury-dark-text;
   }
   
   /* Focus styles */
@@ -51,6 +71,14 @@
   select:focus-visible {
     @apply outline-2 outline-offset-2 outline-luxury-gold;
   }
+  
+  .dark button:focus-visible,
+  .dark a:focus-visible,
+  .dark input:focus-visible,
+  .dark textarea:focus-visible,
+  .dark select:focus-visible {
+    @apply outline-luxury-dark-gold;
+  }
 }
 
 @layer components {
@@ -58,12 +86,24 @@
     @apply bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-warm transition-all duration-300 px-8 py-3 font-medium tracking-wide;
   }
   
+  .dark .btn-primary {
+    @apply bg-luxury-dark-gold text-luxury-dark-bg hover:bg-luxury-dark-accent hover:text-luxury-dark-text;
+  }
+  
   .btn-secondary {
     @apply border border-luxury-charcoal text-luxury-charcoal hover:bg-luxury-charcoal hover:text-luxury-ivory transition-all duration-300 px-8 py-3 font-medium tracking-wide;
   }
   
+  .dark .btn-secondary {
+    @apply border-luxury-dark-border text-luxury-dark-text hover:bg-luxury-dark-surface hover:text-luxury-dark-gold;
+  }
+  
   .btn-gold {
     @apply bg-luxury-gold text-luxury-charcoal hover:bg-luxury-warm hover:text-luxury-ivory transition-all duration-300 px-8 py-3 font-medium tracking-wide;
+  }
+  
+  .dark .btn-gold {
+    @apply bg-luxury-dark-gold text-luxury-dark-bg hover:bg-luxury-dark-accent hover:text-luxury-dark-text;
   }
   
   .section-padding {
@@ -82,8 +122,16 @@
     @apply bg-white/80 backdrop-blur-sm border border-luxury-beige/50 rounded-lg shadow-lg shadow-luxury-beige/20 transition-all duration-300 hover:shadow-xl hover:shadow-luxury-beige/30;
   }
   
+  .dark .card-luxury {
+    @apply bg-luxury-dark-surface/80 border-luxury-dark-border/50 shadow-luxury-dark-border/20 hover:shadow-xl hover:shadow-luxury-dark-border/30;
+  }
+  
   .input-luxury {
     @apply w-full px-4 py-3 border border-luxury-beige bg-luxury-cream/50 rounded-lg focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold transition-all duration-300;
+  }
+  
+  .dark .input-luxury {
+    @apply border-luxury-dark-border bg-luxury-dark-bg/50 text-luxury-dark-text focus:border-luxury-dark-gold focus:ring-luxury-dark-gold;
   }
 }
 

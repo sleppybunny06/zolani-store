@@ -2,8 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { useTheme } from '../contexts/ThemeContext'
 
 const FeaturedCollections = () => {
+  const { isDarkMode } = useTheme()
   const collections = [
     {
       id: 1,
@@ -57,7 +59,7 @@ const FeaturedCollections = () => {
   }
 
   return (
-    <section className="py-20 bg-white">
+    <section className={`py-24 ${isDarkMode ? 'bg-luxury-dark-bg' : 'bg-white'}`}>
       <div className="container-luxury">
         <motion.div 
           className="text-center mb-16"
@@ -66,10 +68,20 @@ const FeaturedCollections = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-luxury-charcoal mb-4">
+          <motion.p 
+            className={`text-sm tracking-widest uppercase mb-4 font-light ${isDarkMode ? 'text-luxury-dark-gold' : 'text-luxury-gold'}`}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            Carefully Curated
+          </motion.p>
+
+          <h2 className={`text-4xl md:text-5xl font-display font-bold mb-4 ${isDarkMode ? 'text-luxury-dark-text' : 'text-luxury-charcoal'}`}>
             Curated Collections
           </h2>
-          <p className="text-luxury-warm text-lg max-w-2xl mx-auto font-light">
+          <p className={`text-lg max-w-2xl mx-auto font-light ${isDarkMode ? 'text-luxury-dark-text-muted' : 'text-luxury-warm'}`}>
             Each collection tells a story of heritage, craftsmanship, and contemporary design
           </p>
         </motion.div>

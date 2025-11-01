@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -20,6 +21,14 @@ export default {
           sage: '#E8E4D8',
           charcoal: '#2C2C2C',
           warm: '#8B7355',
+          // Dark mode variants
+          'dark-bg': '#1A1A1A',
+          'dark-surface': '#2D2D2D',
+          'dark-border': '#3A3A3A',
+          'dark-text': '#F5F5F5',
+          'dark-text-muted': '#A0A0A0',
+          'dark-gold': '#F4D03F',
+          'dark-accent': '#6B5B95',
         }
       },
       animation: {

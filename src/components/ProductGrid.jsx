@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Heart, ShoppingBag, Eye } from 'lucide-react'
 import { products } from '../data/products'
+import { useTheme } from '../contexts/ThemeContext'
 
 const ProductGrid = ({ limit = 8 }) => {
   const [wishlist, setWishlist] = useState(new Set())
+  const { isDarkMode } = useTheme()
 
   const displayProducts = products.slice(0, limit)
 
@@ -63,7 +65,12 @@ const ProductGrid = ({ limit = 8 }) => {
         <motion.div
           key={product.id}
           variants={itemVariants}
-          className="group relative bg-white rounded-2xl overflow-hidden shadow-lg shadow-luxury-beige/20 hover:shadow-xl hover:shadow-luxury-beige/30 transition-all duration-500"
+          className={`group relative rounded-2xl overflow-hidden transition-all duration-500 ${
+            isDarkMode 
+              ? 'bg-luxury-dark-surface shadow-lg shadow-luxury-dark-border/20 hover:shadow-xl hover:shadow-luxury-dark-border/40 border border-luxury-dark-border/30' 
+              : 'bg-white shadow-lg shadow-luxury-beige/20 hover:shadow-xl hover:shadow-luxury-beige/40'
+          }`}
+          whileHover={{ y: -8 }}
         >
           {/* Product Image */}
           <div className="relative aspect-[3/4] overflow-hidden">
@@ -80,22 +87,40 @@ const ProductGrid = ({ limit = 8 }) => {
               />
             )}
             
+            {/* Overlay Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
             {/* Badges */}
             <div className="absolute top-4 left-4 flex flex-col gap-2">
               {product.isNew && (
-                <span className="bg-luxury-gold text-luxury-charcoal px-3 py-1 text-xs font-semibold rounded-full">
+                <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${isDarkMode ? 'bg-luxury-dark-gold text-luxury-dark-bg' : 'bg-luxury-gold text-luxury-charcoal'}`}
+                >
                   NEW
-                </span>
+                </motion.span>
               )}
               {product.isBestseller && (
-                <span className="bg-luxury-charcoal text-luxury-ivory px-3 py-1 text-xs font-semibold rounded-full">
+                <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${isDarkMode ? 'bg-luxury-dark-surface/80 border border-luxury-dark-gold text-luxury-dark-gold' : 'bg-luxury-charcoal text-luxury-ivory'}`}
+                >
                   BESTSELLER
-                </span>
+                </motion.span>
               )}
               {product.originalPrice && (
-                <span className="bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-red-500 text-white px-3 py-1 text-xs font-semibold rounded-full"
+                >
                   SALE
-                </span>
+                </motion.span>
               )}
             </div>
 
@@ -103,10 +128,12 @@ const ProductGrid = ({ limit = 8 }) => {
             <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
               <button
                 onClick={() => toggleWishlist(product.id)}
-                className={`p-2 rounded-full transition-colors duration-300 ${
+                className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
                   wishlist.has(product.id)
                     ? 'bg-red-500 text-white'
-                    : 'bg-white/90 hover:bg-luxury-gold text-luxury-charcoal'
+                    : isDarkMode
+                      ? 'bg-luxury-dark-surface/90 hover:bg-luxury-dark-gold text-luxury-dark-text'
+                      : 'bg-white/90 hover:bg-luxury-gold text-luxury-charcoal'
                 }`}
                 aria-label="Add to wishlist"
               >
@@ -115,7 +142,11 @@ const ProductGrid = ({ limit = 8 }) => {
               
               <Link
                 to={`/product/${product.id}`}
-                className="p-2 rounded-full bg-white/90 hover:bg-luxury-gold text-luxury-charcoal transition-colors duration-300"
+                className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
+                  isDarkMode
+                    ? 'bg-luxury-dark-surface/90 hover:bg-luxury-dark-gold text-luxury-dark-text'
+                    : 'bg-white/90 hover:bg-luxury-gold text-luxury-charcoal'
+                }`}
                 aria-label="Quick view"
               >
                 <Eye size={16} />
@@ -124,7 +155,11 @@ const ProductGrid = ({ limit = 8 }) => {
 
             {/* Quick Add to Cart */}
             <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-              <button className="w-full bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-gold hover:text-luxury-charcoal py-2 px-4 rounded-lg font-medium transition-colors duration-300 flex items-center justify-center gap-2">
+              <button className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
+                isDarkMode
+                  ? 'bg-luxury-dark-gold text-luxury-dark-bg hover:bg-luxury-dark-accent hover:text-luxury-dark-text'
+                  : 'bg-luxury-charcoal text-luxury-ivory hover:bg-luxury-gold hover:text-luxury-charcoal'
+              }`}>
                 <ShoppingBag size={16} />
                 Add to Bag
               </button>
@@ -132,34 +167,34 @@ const ProductGrid = ({ limit = 8 }) => {
           </div>
 
           {/* Product Info */}
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-luxury-warm text-sm font-medium">{product.category}</span>
+          <div className={`p-6 border-t ${isDarkMode ? 'border-luxury-dark-border/30' : 'border-luxury-beige/50'}`}>
+            <div className="flex items-center justify-between mb-3">
+              <span className={`text-sm font-medium ${isDarkMode ? 'text-luxury-dark-text-muted' : 'text-luxury-warm'}`}>{product.category}</span>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
                     className={`w-3 h-3 rounded-full ${
                       i < Math.floor(product.rating) 
-                        ? 'bg-luxury-gold' 
-                        : 'bg-luxury-beige'
+                        ? isDarkMode ? 'bg-luxury-dark-gold' : 'bg-luxury-gold'
+                        : isDarkMode ? 'bg-luxury-dark-border/50' : 'bg-luxury-beige'
                     }`}
                   />
                 ))}
-                <span className="text-luxury-warm text-sm ml-1">({product.rating})</span>
+                <span className={`text-sm ml-1 ${isDarkMode ? 'text-luxury-dark-text-muted' : 'text-luxury-warm'}`}>({product.rating})</span>
               </div>
             </div>
             
-            <h3 className="font-display font-semibold text-luxury-charcoal mb-3 group-hover:text-luxury-gold transition-colors duration-300">
+            <h3 className={`font-display font-semibold mb-3 group-hover:${isDarkMode ? 'text-luxury-dark-gold' : 'text-luxury-gold'} transition-colors duration-300 ${isDarkMode ? 'text-luxury-dark-text' : 'text-luxury-charcoal'}`}>
               <Link to={`/product/${product.id}`}>{product.name}</Link>
             </h3>
             
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-luxury-charcoal">
+              <span className={`text-xl font-bold ${isDarkMode ? 'text-luxury-dark-gold' : 'text-luxury-charcoal'}`}>
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice && (
-                <span className="text-luxury-warm line-through text-sm">
+                <span className={`line-through text-sm ${isDarkMode ? 'text-luxury-dark-text-muted' : 'text-luxury-warm'}`}>
                   {formatPrice(product.originalPrice)}
                 </span>
               )}

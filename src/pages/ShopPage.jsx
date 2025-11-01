@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Filter, Grid, List, SlidersHorizontal, X } from 'lucide-react'
 import ProductGrid from '../components/ProductGrid'
+import ReelSection from '../components/ReelSection'
 
 const ShopPage = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
@@ -237,6 +238,9 @@ const ShopPage = () => {
           </main>
         </div>
       </div>
+
+      {/* Reel Section */}
+      <ReelSection />
 
       {/* Mobile Filter Overlay */}
       {isFilterOpen && (

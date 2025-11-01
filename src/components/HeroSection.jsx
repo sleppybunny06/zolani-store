@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Play, Pause } from 'lucide-react'
+import { ArrowRight, Play, Pause, Sparkles } from 'lucide-react'
+import { useTheme } from '../contexts/ThemeContext'
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isPlaying, setIsPlaying] = useState(true)
+  const { isDarkMode } = useTheme()
 
   const heroSlides = [
     {
@@ -118,6 +120,16 @@ const HeroSection = () => {
                 exit="exit"
                 className="max-w-4xl mx-auto"
               >
+                {/* Decorative Element */}
+                <motion.div 
+                  variants={itemVariants}
+                  className="flex justify-center mb-6"
+                >
+                  <div className="p-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                    <Sparkles className="text-luxury-gold" size={20} />
+                  </div>
+                </motion.div>
+
                 <motion.p 
                   variants={itemVariants}
                   className="text-luxury-gold font-medium tracking-widest uppercase mb-4 text-sm md:text-base"
@@ -127,22 +139,25 @@ const HeroSection = () => {
                 
                 <motion.h1 
                   variants={itemVariants}
-                  className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight"
+                  className="text-5xl md:text-7xl lg:text-8xl font-display font-bold mb-6 leading-tight drop-shadow-2xl"
                 >
                   {heroSlides[currentSlide].title}
                 </motion.h1>
                 
                 <motion.p 
                   variants={itemVariants}
-                  className="text-lg md:text-xl mb-8 max-w-2xl mx-auto font-light leading-relaxed text-white/90"
+                  className="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light leading-relaxed text-white/90"
                 >
                   {heroSlides[currentSlide].description}
                 </motion.p>
                 
-                <motion.div variants={itemVariants}>
+                <motion.div 
+                  variants={itemVariants}
+                  className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                >
                   <Link 
                     to={heroSlides[currentSlide].ctaLink}
-                    className="inline-flex items-center bg-white text-luxury-charcoal hover:bg-luxury-gold hover:text-white transition-all duration-300 px-8 py-4 font-medium tracking-wide group transform hover:scale-105"
+                    className="inline-flex items-center bg-white text-luxury-charcoal hover:bg-luxury-gold hover:text-white transition-all duration-300 px-8 py-4 font-medium tracking-wide group transform hover:scale-105 rounded-lg"
                   >
                     {heroSlides[currentSlide].cta}
                     <ArrowRight 
@@ -150,6 +165,17 @@ const HeroSection = () => {
                       size={18} 
                     />
                   </Link>
+                  
+                  <button 
+                    className="inline-flex items-center border-2 border-white text-white hover:bg-white hover:text-luxury-charcoal transition-all duration-300 px-8 py-3 font-medium tracking-wide group rounded-lg"
+                    aria-label="Learn more about this collection"
+                  >
+                    <span>Learn More</span>
+                    <ArrowRight 
+                      className="ml-2 group-hover:translate-x-1 transition-transform duration-300" 
+                      size={18} 
+                    />
+                  </button>
                 </motion.div>
               </motion.div>
             </div>
